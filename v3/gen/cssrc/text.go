@@ -55,7 +55,8 @@ namespace {{.PackageName}}
 		{{end}}{{end}}
 		
 		{{if HasKeyValueTypes $}}
-		//{{range $ti, $name := GetKeyValueTypeNames $}} table: {{$name}}
+		{{range $ti, $name := GetKeyValueTypeNames $}}
+		// table: {{$name}}
 		public {{$name}} GetKeyValue_{{$name}}()
 		{
 			return {{$name}}[0];
@@ -94,13 +95,21 @@ namespace {{.PackageName}}
 					}
 				}
 			}
-			{{range $ii, $idx := GetIndices $}}	
-			{{if IsWarpFieldName $ $idx.FieldInfo}}foreach( var kv in {{$idx.Table.HeaderType}} )
+		}
+
+		public void IndexData( string tabName = "")
+		{ {{range $ii, $idx := GetIndices $}}	
+			if (tabName == "" || tabName == "{{$idx.Table.HeaderType}}")
 			{
-				{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
+				{{if IsWarpFieldName $ $idx.FieldInfo}}foreach( var kv in {{$idx.Table.HeaderType}} )
+				{
+					{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
+				}
+				{{end}}
 			}
-			{{end}}{{end}}
-		}{{end}}
+			{{end}}
+		}
+		{{end}}
 	}
 }
 `

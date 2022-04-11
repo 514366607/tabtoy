@@ -42,7 +42,7 @@ func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType 
 	return
 }
 
-func checkHeaderTypes(tab *model.DataTable, typeTab *model.TypeTable) {
+func checkHeaderTypes(tab *model.DataTable, symbols *model.TypeTable) {
 
 	for _, header := range tab.Headers {
 
@@ -52,7 +52,7 @@ func checkHeaderTypes(tab *model.DataTable, typeTab *model.TypeTable) {
 
 		// 原始类型检查
 		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
-			!typeTab.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
+			!symbols.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
 			report.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())
 		}
@@ -82,7 +82,7 @@ func resolveHeaderFields(tab *model.DataTable, tableObjectType string, typeTab *
 
 		tf := typeTab.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
-			report.ReportError("HeaderFieldNotDefined", header.Cell.String())
+			report.ReportError("HeaderFieldNotDefined", header.Cell.String(), tableObjectType)
 		}
 
 		if headerValueExists(index+1, header.Cell.Value, tab.Headers) && !tf.IsArray() {
