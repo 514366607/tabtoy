@@ -1,6 +1,6 @@
 module github.com/514366607/tabtoy
 
-go 1.12
+go 1.16
 
 require (
 	github.com/ahmetb/go-linq v3.0.0+incompatible
@@ -17,3 +17,5 @@ require (
 	google.golang.org/protobuf v1.23.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
+
+replace github.com/davyxu/tabtoy => ./
