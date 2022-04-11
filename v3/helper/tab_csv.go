@@ -3,13 +3,14 @@ package helper
 import (
 	"bytes"
 	"encoding/csv"
-	"golang.org/x/net/html/charset"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/net/html/charset"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 type CSVFile struct {
@@ -96,6 +97,9 @@ func (self *CSVFile) Load(fileName string) error {
 		return err
 	}
 
+	if data[0] == 0xef || data[1] == 0xbb || data[2] == 0xbf {
+		data = data[3:]
+	}
 
 	self.Name = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
@@ -107,10 +111,9 @@ func (self *CSVFile) Load(fileName string) error {
 
 	// 自动探测非utf-8编码, 转换
 	_, codecName, _ := charset.DetermineEncoding(data, "")
-	if codecName != "utf-8"{
+	if codecName != "utf-8" {
 		self.Transform(ConvGBKToUTF8)
 	}
-
 
 	return nil
 }
