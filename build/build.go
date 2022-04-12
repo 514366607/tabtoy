@@ -3,7 +3,7 @@ package build
 import "fmt"
 
 var (
-	Version   string
+	Version   = "3.1.1"
 	GitCommit string
 	BuildTime string
 )

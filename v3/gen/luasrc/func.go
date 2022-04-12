@@ -12,21 +12,40 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) string {
-	var fields = model.HadderStructCache[valueType.FieldName]
+	var fields = model.HadderStructCache[valueType.FieldType]
 	if valueType.IsArray() {
 		var sb strings.Builder
-		sb.WriteString("{")
+		sb.WriteString("{ ")
 
 		if cell != nil {
 			for index, elementValue := range cell.ValueList {
 				if index > 0 {
-					sb.WriteString(",")
+					sb.WriteString(" , ")
 				}
-				sb.WriteString(gen.WrapSingleValue(globals, valueType, elementValue))
+
+				if fields != nil {
+					sb.WriteString("{ ")
+					for index2, tmp := range strings.Split(elementValue, " ") {
+						if index2 > 0 {
+							sb.WriteString(" , ")
+						}
+
+						data := strings.Split(tmp, ":")
+						if len(data) != 2 {
+							report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
+
+						}
+						sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
+						sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+					}
+					sb.WriteString(" }")
+				} else {
+					sb.WriteString(gen.WrapSingleValue(globals, valueType, elementValue))
+				}
 			}
 		}
 
-		sb.WriteString("}")
+		sb.WriteString(" }")
 
 		return sb.String()
 
@@ -36,28 +55,23 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 		}
 
 		var sb strings.Builder
-		sb.WriteString("{")
+		sb.WriteString("{ ")
 
-		if cell != nil {
+		if cell != nil && cell.Value != "" {
 			for index, elementValue := range cell.ValueList {
 				if index > 0 {
-					sb.WriteString(",")
+					sb.WriteString(" , ")
 				}
 				data := strings.Split(elementValue, ":")
 				if len(data) != 2 {
 					report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
 				}
-				if _, ok := fields.TypeInfo[data[0]]; ok {
-					sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
-				} else {
-					sb.WriteString(data[0] + " = ")
-				}
-
+				sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
 				sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
 			}
 		}
 
-		sb.WriteString("}")
+		sb.WriteString(" }")
 
 		return sb.String()
 	} else {
