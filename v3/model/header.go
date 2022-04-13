@@ -31,16 +31,18 @@ func (self *HeaderField) String() string {
 type HeaderStruct struct {
 	Name     string                 // 表头结构体名
 	TypeInfo map[string]*TypeDefine // 字段
+	TypeTab  *TypeTable
 }
 
 // HadderStructCache 表头结构缓存
 var HadderStructCache = make(map[string]*HeaderStruct)
 
 // AddHadderStructCache 添加表头结构数据
-func AddHadderStructCache(name string, s *TypeDefine) {
+func AddHadderStructCache(name string, typeTab *TypeTable, s *TypeDefine) {
 	if _, ok := HadderStructCache[name]; !ok {
 		HadderStructCache[name] = &HeaderStruct{
 			Name:     name,
+			TypeTab:  typeTab,
 			TypeInfo: make(map[string]*TypeDefine),
 		}
 	}
