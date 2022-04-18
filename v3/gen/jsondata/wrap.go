@@ -47,7 +47,9 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 			data := strings.Split(tmp, ":")
 			if len(data) != 2 {
 				report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
-
+			}
+			if fields.TypeInfo[data[0]] == nil {
+				report.ReportError("UnknownTypeKind", valueType.ObjectType, data[0])
 			}
 			test[fields.TypeInfo[data[0]].FieldName] = wrapSingleValue(globals, fields.TypeInfo[data[0]], data[1])
 		}
