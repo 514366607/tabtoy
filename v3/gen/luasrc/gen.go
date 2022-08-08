@@ -2,10 +2,11 @@ package luasrc
 
 import (
 	"fmt"
+	"io/ioutil"
+
 	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/model"
-	"io/ioutil"
 )
 
 func Generate(globals *model.Globals) (data []byte, err error) {
@@ -37,9 +38,22 @@ func Output(globals *model.Globals, param string) (err error) {
 	if err != nil {
 		return err
 	}
-
 	err = ioutil.WriteFile(fmt.Sprintf("%s/_%sType.lua", param, globals.CombineStructName), typeData, 0666)
+	if err != nil {
+		return err
+	}
 
+	var docData []byte
+	err = codegen.NewCodeGen("luadoc").
+		RegisterTemplateFunc(codegen.UsefulFunc).
+		RegisterTemplateFunc(gen.UsefulFunc).
+		RegisterTemplateFunc(UsefulFunc).
+		ParseTemplate(templateText_LuaDoc, globals).
+		WriteBytes(&docData).Error()
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(fmt.Sprintf("protocol/LuaGenerator/_%sDoc.lua", globals.CombineStructName), docData, 0666)
 	if err != nil {
 		return err
 	}
