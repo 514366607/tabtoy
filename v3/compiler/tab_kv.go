@@ -1,9 +1,10 @@
 package compiler
 
 import (
+	"strings"
+
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"strings"
 )
 
 func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *model.DataTable) {
@@ -45,7 +46,7 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		tf.FieldName = fieldName.Value
 		tf.FieldType = fieldType.Value
 		tf.ArraySplitter = arraySplitter.Value
-		if note !=nil {
+		if note != nil {
 			tf.Note = note.Value
 		}
 
