@@ -38,14 +38,14 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 						}
 						sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
 						if fields.TypeInfo[data[0]].ArraySplitter != "" {
-							sb.WriteString("[ ")
+							sb.WriteString("{ ")
 							for arrIndex, element := range strings.Split(data[1], fields.TypeInfo[data[0]].ArraySplitter) {
 								if arrIndex > 0 {
 									sb.WriteString(" , ")
 								}
 								sb.WriteString(gen.WrapSingleValue(globals, valueType, element))
 							}
-							sb.WriteString(" ]")
+							sb.WriteString(" }")
 						} else {
 							sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
 						}
@@ -80,14 +80,14 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 				}
 				sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
 				if fields.TypeInfo[data[0]].ArraySplitter != "" {
-					sb.WriteString("[ ")
+					sb.WriteString("{ ")
 					for arrIndex, element := range strings.Split(data[1], fields.TypeInfo[data[0]].ArraySplitter) {
 						if arrIndex > 0 {
 							sb.WriteString(" , ")
 						}
 						sb.WriteString(gen.WrapSingleValue(globals, valueType, element))
 					}
-					sb.WriteString(" ]")
+					sb.WriteString(" }")
 				} else {
 					sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
 				}
