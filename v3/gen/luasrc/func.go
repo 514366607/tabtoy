@@ -13,6 +13,7 @@ var UsefulFunc = template.FuncMap{}
 
 func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) string {
 	var fields = model.HadderStructCache[valueType.FieldType]
+
 	if valueType.IsArray() {
 		var sb strings.Builder
 		sb.WriteString("{ ")
@@ -36,7 +37,18 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 
 						}
 						sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
-						sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+						if fields.TypeInfo[data[0]].ArraySplitter != "" {
+							sb.WriteString("[ ")
+							for arrIndex, element := range strings.Split(data[1], fields.TypeInfo[data[0]].ArraySplitter) {
+								if arrIndex > 0 {
+									sb.WriteString(" , ")
+								}
+								sb.WriteString(gen.WrapSingleValue(globals, valueType, element))
+							}
+							sb.WriteString(" ]")
+						} else {
+							sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+						}
 					}
 					sb.WriteString(" }")
 				} else {
@@ -67,7 +79,18 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 					report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
 				}
 				sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
-				sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+				if fields.TypeInfo[data[0]].ArraySplitter != "" {
+					sb.WriteString("[ ")
+					for arrIndex, element := range strings.Split(data[1], fields.TypeInfo[data[0]].ArraySplitter) {
+						if arrIndex > 0 {
+							sb.WriteString(" , ")
+						}
+						sb.WriteString(gen.WrapSingleValue(globals, valueType, element))
+					}
+					sb.WriteString(" ]")
+				} else {
+					sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+				}
 			}
 		}
 
