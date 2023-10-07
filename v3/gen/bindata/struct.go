@@ -33,7 +33,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 
 			for _, elementValue := range cell.ValueList {
 
-				if err := writePair(globals, structWriter, header.TypeInfo, goType, elementValue, header.Cell.Col); err != nil {
+				if err := writePair(globals, structWriter, header.TypeInfo, goType, elementValue, header.Cell.Col, true); err != nil {
 					return nil, err
 				}
 			}
@@ -43,7 +43,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 			// 空格不输出
 			if cell.Value != "" {
 
-				if err := writePair(globals, structWriter, header.TypeInfo, goType, cell.Value, header.Cell.Col); err != nil {
+				if err := writePair(globals, structWriter, header.TypeInfo, goType, cell.Value, header.Cell.Col, true); err != nil {
 					return nil, err
 				}
 			}

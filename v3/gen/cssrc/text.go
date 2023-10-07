@@ -16,7 +16,7 @@ namespace {{.PackageName}}
 	{{end}}	{{range $sn, $objName := $.Types.StructNames}}
 	public partial class {{$objName}} : tabtoy.ITableSerializable
 	{ 
-		{{range $fi,$field := $.Types.AllFieldByName $objName}}{{if IsWarpFieldName $ $field}}public {{CSType $field}} {{$field.FieldName}} = {{CSDefaultValue $ $field}};
+		{{range $fi,$field := $.Types.AllFieldByName $objName}}{{if IsWarpFieldName $ $field}}public {{CSType $field}} {{$field.FieldName}} {{CSDefaultValue $ $field}};
 		{{end}}{{end}}
 		{{if $.GenBinary}}#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )

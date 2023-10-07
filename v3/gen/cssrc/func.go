@@ -2,10 +2,11 @@ package cssrc
 
 import (
 	"fmt"
+	"text/template"
+
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/gen/bindata"
 	"github.com/davyxu/tabtoy/v3/model"
-	"text/template"
 )
 
 var UsefulFunc = template.FuncMap{}
@@ -71,7 +72,7 @@ func init() {
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {
 
 		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
-
+		var fields = model.HadderStructCache[tf.FieldType]
 		switch {
 		case convertedType == "float":
 			ret = "Float"
@@ -83,6 +84,8 @@ func init() {
 			ret = "Bool"
 		case globals.Types.IsEnumKind(tf.FieldType):
 			ret = "Enum"
+		case fields != nil:
+			ret = "Struct"
 		default:
 			ret = convertedType
 		}
@@ -95,11 +98,13 @@ func init() {
 		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
 
 		if tf.IsArray() {
-			return fmt.Sprintf("new List<%s>()", convertedType)
-		} else {
-			return wrapSingleValue(globals, tf, "")
+			return fmt.Sprintf("= new List<%s>()", convertedType)
 		}
-
+		value := wrapSingleValue(globals, tf, "")
+		if len(value) > 0 {
+			return "= " + value
+		}
+		return ""
 	}
 
 	UsefulFunc["IsWarpFieldName"] = func(globals *model.Globals, tf *model.TypeDefine) bool {
