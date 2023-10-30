@@ -62,14 +62,14 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 		return sb.String()
 
 	} else if fields != nil && len(fields.TypeInfo) > 0 {
-		if len(cell.ValueList) < 1 {
-			cell.ValueList = strings.Split(cell.Value, " ")
-		}
-
 		var sb strings.Builder
 		sb.WriteString("{ ")
 
 		if cell != nil && cell.Value != "" {
+			if len(cell.ValueList) < 1 {
+				cell.ValueList = strings.Split(cell.Value, " ")
+			}
+
 			for index, elementValue := range cell.ValueList {
 				if index > 0 {
 					sb.WriteString(" , ")
@@ -77,6 +77,9 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 				data := strings.Split(elementValue, ":")
 				if len(data) != 2 {
 					report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
+				}
+				if fields.TypeInfo[data[0]] == nil {
+					report.ReportError("UnknownFieldType", valueType.ObjectType, valueType.FieldName, data[0])
 				}
 				sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
 				if fields.TypeInfo[data[0]].ArraySplitter != "" {
