@@ -66,11 +66,12 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 		sb.WriteString("{ ")
 
 		if cell != nil && cell.Value != "" {
+			var newValueList = []string{}
 			if len(cell.ValueList) < 1 {
-				cell.ValueList = strings.Split(cell.Value, " ")
+				newValueList = strings.Split(cell.Value, " ")
 			}
 
-			for index, elementValue := range cell.ValueList {
+			for index, elementValue := range newValueList {
 				if index > 0 {
 					sb.WriteString(" , ")
 				}
@@ -111,26 +112,33 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 	}
 }
 
-func init() {
-	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret string) {
-		// 找到完整的表头（按完整表头遍历）
-		header := allHeaders[col]
+func wrapTabValue(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret string) {
+	// 找到完整的表头（按完整表头遍历）
+	header := allHeaders[col]
 
-		if header == nil {
-			return ""
-		}
-
-		// 在单元格找到值
-		valueCell := dataTable.GetCell(row, col)
-
-		if valueCell != nil {
-
-			return WrapValue(globals, valueCell, header)
-		} else {
-			// 这个表中没有这列数据
-			return WrapValue(globals, nil, header)
-		}
+	if header == nil {
+		return ""
 	}
+
+	// 在单元格找到值
+	valueCell := dataTable.GetCell(row, col)
+
+	var wrapTabValue string
+	if valueCell != nil {
+		wrapTabValue = WrapValue(globals, valueCell, header)
+	} else {
+		// 这个表中没有这列数据
+		wrapTabValue = WrapValue(globals, nil, header)
+	}
+
+	if dataTable.CommonCols[col].UnKey == valueCell.Value+"..."+strings.Join(valueCell.ValueList, "|") {
+		dataTable.CommonCols[col].WrapTabValue = wrapTabValue
+	}
+	return wrapTabValue
+}
+
+func init() {
+	UsefulFunc["WrapTabValue"] = wrapTabValue
 
 	UsefulFunc["IsWrapFieldName"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret bool) {
 		// 找到完整的表头（按完整表头遍历）
@@ -144,7 +152,29 @@ func init() {
 			return false
 		}
 
-		return true
+		valueCell := dataTable.GetCell(row, col)
+
+		// 简略重复数据
+		ok := dataTable.CommonCols[col].UnKey == valueCell.Value+"..."+strings.Join(valueCell.ValueList, "|")
+		if ok {
+			wrapTabValue(globals, dataTable, allHeaders, row, col)
+		}
+		return !ok
+	}
+
+	UsefulFunc["DefaultField"] = func(globals *model.Globals, dataTable *model.DataTable) map[string]string {
+		values := make(map[string]string)
+		for col, data := range dataTable.CommonCols {
+			header := dataTable.Headers[col]
+			if header == nil {
+				continue
+			}
+			if globals.CanDoAction(model.ActionNoGennFieldLua, header.TypeInfo) {
+				continue
+			}
+			values[data.FieldName] = data.WrapTabValue
+		}
+		return values
 	}
 
 }

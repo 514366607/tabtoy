@@ -17,7 +17,19 @@ type DataTable struct {
 
 	Rows []*DataRow // 0下标为表头数据
 
+	CommonCols []*CommonCol // 本列最常出现的数据
+
 	Headers []*HeaderField
+}
+
+// CommonCol 本列最常出现的数据结构
+type CommonCol struct {
+	FieldName    string
+	Value        string
+	ValueList    []string
+	UnKey        string
+	WrapTabValue string
+	Count        int
 }
 
 // 重复列在表中的索引, 相对于重复列的数量
