@@ -1,8 +1,6 @@
 package compiler
 
 import (
-	"strings"
-
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 )
