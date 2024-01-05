@@ -9,7 +9,7 @@ import (
 
 func MakeTag(globals *model.Globals, tf *model.TypeDefine, fieldIndex int) uint32 {
 	convertedType := model.LanguagePrimitive(tf.FieldType, "go")
-	isHadderStruct := model.HadderStructCache[tf.FieldType]
+	isHadderStruct := model.HeaderStructCache[tf.FieldType]
 	var t int
 	switch {
 	case convertedType == "int16":
@@ -68,7 +68,7 @@ func writePair(globals *model.Globals, structWriter *BinaryWriter, fieldType *mo
 }
 
 func structWritePair(globals *model.Globals, structWriter *BinaryWriter, fieldType *model.TypeDefine, goType, value string, fieldIndex int, lenWrite bool) error {
-	var fields = model.HadderStructCache[fieldType.FieldType]
+	var fields = model.HeaderStructCache[fieldType.FieldType]
 	if fields != nil {
 		// 结构体二进制边界
 		newStructWriter := NewBinaryWriter()

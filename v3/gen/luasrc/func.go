@@ -12,7 +12,7 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) string {
-	var fields = model.HadderStructCache[valueType.FieldType]
+	var fields = model.HeaderStructCache[valueType.FieldType]
 
 	if valueType.IsArray() {
 		var sb strings.Builder
@@ -93,7 +93,15 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 					}
 					sb.WriteString(" }")
 				} else {
-					sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+					if fieldData, ok := fields.TypeInfo[data[0]]; ok && fieldData.Kind == model.TypeUsage_HeaderStruct {
+						if globals.Types.IsEnumKind(fieldData.FieldType) {
+							sb.WriteString(gen.WrapSingleValue(globals, valueType, globals.Types.GetEnumValue(fieldData.FieldType, data[1]).Define.Value))
+						} else {
+							sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+						}
+					} else {
+						sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+					}
 				}
 			}
 		}

@@ -34,20 +34,20 @@ type HeaderStruct struct {
 	TypeTab  *TypeTable
 }
 
-// HadderStructCache 表头结构缓存
-var HadderStructCache = make(map[string]*HeaderStruct)
+// HeaderStructCache 表头结构缓存
+var HeaderStructCache = make(map[string]*HeaderStruct)
 
-// AddHadderStructCache 添加表头结构数据
-func AddHadderStructCache(name string, typeTab *TypeTable, s *TypeDefine) {
-	if _, ok := HadderStructCache[name]; !ok {
-		HadderStructCache[name] = &HeaderStruct{
+// AddHeaderStructCache 添加表头结构数据
+func AddHeaderStructCache(name string, typeTab *TypeTable, s *TypeDefine) {
+	if _, ok := HeaderStructCache[name]; !ok {
+		HeaderStructCache[name] = &HeaderStruct{
 			Name:     name,
 			TypeTab:  typeTab,
 			TypeInfo: make(map[string]*TypeDefine),
 		}
 	}
 	// 存放标识名
-	HadderStructCache[name].TypeInfo[s.Name] = s
+	HeaderStructCache[name].TypeInfo[s.Name] = s
 	// 存放字段名
-	HadderStructCache[name].TypeInfo[s.FieldName] = s
+	HeaderStructCache[name].TypeInfo[s.FieldName] = s
 }

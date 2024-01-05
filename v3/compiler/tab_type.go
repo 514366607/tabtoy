@@ -39,7 +39,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 			}
 
 			if objtype.Kind == model.TypeUsage_HeaderStruct {
-				model.AddHadderStructCache(objtype.ObjectType, typeTab, &objtype)
+				model.AddHeaderStructCache(objtype.ObjectType, typeTab, &objtype)
 			}
 			typeTab.AddField(&objtype, tab, row)
 		}

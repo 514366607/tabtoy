@@ -72,7 +72,7 @@ func init() {
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {
 
 		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
-		var fields = model.HadderStructCache[tf.FieldType]
+		var fields = model.HeaderStructCache[tf.FieldType]
 		switch {
 		case convertedType == "float":
 			ret = "Float"

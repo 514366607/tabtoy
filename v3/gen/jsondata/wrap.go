@@ -36,7 +36,7 @@ func wrapValue(globals *model.Globals, valueCell *model.Cell, valueType *model.T
 
 func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) interface{} {
 	goType := model.LanguagePrimitive(valueType.FieldType, "go")
-	var fields = model.HadderStructCache[goType]
+	var fields = model.HeaderStructCache[goType]
 	if fields != nil {
 		var test = make(map[string]interface{})
 		if value == "" {
