@@ -97,7 +97,7 @@ func (self *CSVFile) Load(fileName string) error {
 	}
 
 	if len(data) > 3 {
-		if data[0] == 0xef || data[1] == 0xbb || data[2] == 0xbf {
+		if data[0] == 0xef && data[1] == 0xbb && data[2] == 0xbf {
 			data = data[3:]
 		}
 	}
