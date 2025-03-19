@@ -1,6 +1,7 @@
 package luasrc
 
 import (
+	"log"
 	"strings"
 	"text/template"
 
@@ -130,6 +131,13 @@ func init() {
 
 		// 在单元格找到值
 		valueCell := dataTable.GetCell(row, col)
+
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println(valueCell)
+				panic(err)
+			}
+		}()
 
 		if valueCell != nil {
 
